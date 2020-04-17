@@ -21,8 +21,9 @@ import java.util.HashSet;
 public class SocketServer {
     private static ServerSocket server;
     private static HashMap<String, Usuario> usuarios = new HashMap<>();
-    private static int port = 123;
+    private static int portToReceptor = 123;
     private static FormateadorListaUsuarios formateador = new FormateadorListaUsuarios();
+    private static int portToEmisor = 1234;
     
     public SocketServer() {
         super();
@@ -32,7 +33,7 @@ public class SocketServer {
         new Thread() {
             public void run() {
                 try {
-                    server = new ServerSocket(port);
+                    server = new ServerSocket(portToReceptor);
                     while (true) {
                         Socket socket = server.accept();
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -69,10 +70,10 @@ public class SocketServer {
     }
     
     public static void enviarListaUsuarios(String nroIP) throws UnknownHostException, IOException {
-        Socket socket = new Socket(nroIP.trim(), 1234);
+        Socket socket = new Socket(nroIP.trim(), portToEmisor);
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out.println("probando");
+        out.println(formateador.escribeListUsuarios(usuarios));
         out.close();
         socket.close();
     }
