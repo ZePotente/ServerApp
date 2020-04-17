@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import java.net.UnknownHostException;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -20,6 +22,7 @@ public class SocketServer {
     private static ServerSocket server;
     private static HashMap<String, Usuario> usuarios = new HashMap<>();
     private static int port = 123;
+    private static FormateadorListaUsuarios formateador = new FormateadorListaUsuarios();
     
     public SocketServer() {
         super();
@@ -50,8 +53,10 @@ public class SocketServer {
                             } else { // No esta agregado, debo agregarlo
                                 usuarios.put(aux, new Usuario(aux, objectIn.readLine(), true));
                             }
-                        } else { // Es un mensaje, lo envio directo al receptor
-                            out.println(objectIn);
+                        } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
+                            // Leo la IP del emisor que pide la lista de receptores
+                            aux = objectIn.readLine();
+                            enviarListaUsuarios(aux);
                         }
                         socket.close();
                         out.close();
@@ -61,6 +66,15 @@ public class SocketServer {
                     }
                 }
         }.start();
+    }
+    
+    public static void enviarListaUsuarios(String nroIP) throws UnknownHostException, IOException {
+        Socket socket = new Socket(nroIP.trim(), 1234);
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out.println("probando");
+        out.close();
+        socket.close();
     }
 }
 
