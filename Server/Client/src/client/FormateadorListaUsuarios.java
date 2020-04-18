@@ -3,6 +3,7 @@ package client;
 import java.util.HashMap;
 
 public class FormateadorListaUsuarios {
+    // private String SEPARADOR_ATRIBUTO = "-", String SEPARADOR-USUARIO = "\n";
     public FormateadorListaUsuarios() {
         super();
     }

@@ -55,12 +55,10 @@ public class SocketServer {
                                 usuarios.put(aux, new Usuario(aux, objectIn.readLine(), true));
                             }
                         } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
-                            // Leo la IP del emisor que pide la lista de receptores
-                            aux = objectIn.readLine();
-                            enviarListaUsuarios(aux);
+                            out.println(formateador.escribeListUsuarios(usuarios));
                         }
-                        socket.close();
                         out.close();
+                        socket.close();
                         }
                     } catch (IOException e) {
                         System.out.println(e.getMessage());
@@ -69,6 +67,7 @@ public class SocketServer {
         }.start();
     }
     
+    /*
     public static void enviarListaUsuarios(String nroIP) throws UnknownHostException, IOException {
         Socket socket = new Socket(nroIP.trim(), portToEmisor);
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -77,5 +76,6 @@ public class SocketServer {
         out.close();
         socket.close();
     }
+    */
 }
 
