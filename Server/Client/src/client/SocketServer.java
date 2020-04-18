@@ -21,9 +21,9 @@ import java.util.HashSet;
 public class SocketServer {
     private static ServerSocket server;
     private static HashMap<String, Usuario> usuarios = new HashMap<>();
-    private static int portToReceptor = 123;
+    private static int port = 100;
     private static FormateadorListaUsuarios formateador = new FormateadorListaUsuarios();
-    private static int portToEmisor = 1234;
+    // private static int portToEmisor = 1234;
     
     public SocketServer() {
         super();
@@ -33,7 +33,7 @@ public class SocketServer {
         new Thread() {
             public void run() {
                 try {
-                    server = new ServerSocket(portToReceptor);
+                    server = new ServerSocket(port);
                     while (true) {
                         Socket socket = server.accept();
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
