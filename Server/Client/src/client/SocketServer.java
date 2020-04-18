@@ -48,7 +48,7 @@ public class SocketServer {
                                 aux = objectIn.readLine();
                                 // Leo el estado del usuario
                                 aux = objectIn.readLine();
-                                usuario.setEstado(aux.equalsIgnoreCase("online"));
+                                usuario.setEstado(aux.equalsIgnoreCase("true"));
                             } else { // No esta agregado, debo agregarlo
                                 usuarios.put(aux, new Usuario(aux, objectIn.readLine(), true));
                             }

@@ -82,7 +82,7 @@
          <hash n="Default">
             <value n="custom" v="false"/>
             <value n="name" v="Default"/>
-            <url n="targetURL" path="src/client/SocketServer.java"/>
+            <url n="targetURL" path="src/main/Main.java"/>
          </hash>
       </hash>
    </hash>
