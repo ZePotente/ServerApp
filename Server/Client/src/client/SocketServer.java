@@ -21,15 +21,13 @@ import java.util.HashSet;
 public class SocketServer {
     private static ServerSocket server;
     private static HashMap<String, Usuario> usuarios = new HashMap<>();
-    private static int port = 100;
     private static FormateadorListaUsuarios formateador = new FormateadorListaUsuarios();
-    // private static int portToEmisor = 1234;
     
     public SocketServer() {
         super();
     }
     
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public void abrirSv(int port) throws IOException, ClassNotFoundException {
         new Thread() {
             public void run() {
                 try {
