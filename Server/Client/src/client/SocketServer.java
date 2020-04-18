@@ -21,9 +21,9 @@ import java.util.HashSet;
 public class SocketServer {
     private static ServerSocket server;
     private static HashMap<String, Usuario> usuarios = new HashMap<>();
-    private static int portToReceptor = 123;
+    private static int port = 100;
     private static FormateadorListaUsuarios formateador = new FormateadorListaUsuarios();
-    private static int portToEmisor = 1234;
+    // private static int portToEmisor = 1234;
     
     public SocketServer() {
         super();
@@ -33,7 +33,7 @@ public class SocketServer {
         new Thread() {
             public void run() {
                 try {
-                    server = new ServerSocket(portToReceptor);
+                    server = new ServerSocket(port);
                     while (true) {
                         Socket socket = server.accept();
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -55,27 +55,18 @@ public class SocketServer {
                                 usuarios.put(aux, new Usuario(aux, objectIn.readLine(), true));
                             }
                         } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
-                            // Leo la IP del emisor que pide la lista de receptores
-                            aux = objectIn.readLine();
-                            enviarListaUsuarios(aux);
+                            System.out.println("imprimiendo lista.");
+                            out.println(formateador.escribeListUsuarios(usuarios));
+                            System.out.println("lista impresa.");
                         }
-                        socket.close();
                         out.close();
+                        socket.close();
                         }
                     } catch (IOException e) {
                         System.out.println(e.getMessage());
                     }
                 }
         }.start();
-    }
-    
-    public static void enviarListaUsuarios(String nroIP) throws UnknownHostException, IOException {
-        Socket socket = new Socket(nroIP.trim(), portToEmisor);
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out.println(formateador.escribeListUsuarios(usuarios));
-        out.close();
-        socket.close();
     }
 }
 
