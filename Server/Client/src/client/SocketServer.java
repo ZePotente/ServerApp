@@ -55,6 +55,7 @@ public class SocketServer {
                         } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
                             System.out.println("imprimiendo lista.");
                             out.println(formateador.escribeListUsuarios(usuarios));
+                            out.flush();
                             System.out.println("lista impresa.");
                         }
                         out.close();
