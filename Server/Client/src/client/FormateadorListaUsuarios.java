@@ -11,7 +11,9 @@ public class FormateadorListaUsuarios {
     public String escribeListUsuarios(HashMap<String, Usuario> usuarios) {
         String retorno = "";
         for (Usuario usuario: usuarios.values()) {
-            retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_USUARIOS;
+            if (usuario.getEstado()) {
+                retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_USUARIOS;
+            }
         }
         // retorno = pruebaEnvio();
         System.out.println("Lista: " + retorno);

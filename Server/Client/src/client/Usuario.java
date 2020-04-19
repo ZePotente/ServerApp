@@ -15,6 +15,10 @@ public class Usuario {
         return numeroDeIP;
     }
     
+    public boolean getEstado() {
+        return estado;
+    }
+    
     public String getNombre() {
         return nombre;
     }
