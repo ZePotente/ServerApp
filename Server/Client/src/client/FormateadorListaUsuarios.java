@@ -13,7 +13,8 @@ public class FormateadorListaUsuarios {
         for (Usuario usuario: usuarios.values()) {
             retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_USUARIOS;
         }
-        retorno = pruebaEnvio();
+        // retorno = pruebaEnvio();
+        System.out.println("Lista: " + retorno);
         return retorno;
     }
     
