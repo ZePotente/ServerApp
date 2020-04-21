@@ -14,7 +14,6 @@ public class FormateadorListaUsuarios {
             retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_ATRIBUTOS + usuario.getEstado() + SEPARADOR_USUARIOS;
         }
         // retorno = pruebaEnvio();
-        System.out.println("Lista: " + retorno);
         return retorno;
     }
     

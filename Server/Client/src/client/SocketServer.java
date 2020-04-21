@@ -53,16 +53,13 @@ public class SocketServer {
                                 usuarios.put(aux, new Usuario(aux, objectIn.readLine(), true));
                             }
                         } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
-                            System.out.println("imprimiendo lista.");
                             out.println(formateador.escribeListUsuarios(usuarios));
                             out.flush();
-                            System.out.println("lista impresa.");
                         }
                         out.close();
                         socket.close();
                         }
                     } catch (IOException e) {
-                        System.out.println(e.getMessage());
                     }
                 }
         }.start();
