@@ -24,7 +24,6 @@ public class Sistema {
         try {
             sv.abrirSv(port);
         } catch (ClassNotFoundException | IOException e) {
-            System.out.println("Error de conexion, fallo el servidor.");
         }
     }
 }
