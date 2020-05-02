@@ -1,2 +1,4 @@
-#Le saco el tracking a .data porque es molesto
-/Server/.data
+#ignorar la carpeta .data para evitar quilombos
+Server/.data
+Server/Client/model
+Server/Client/deploy
