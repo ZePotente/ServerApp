@@ -31,17 +31,35 @@ public class Server {
             public void run() {
                 try {
                     server = new ServerSocket(port);
+                    int i = 0;
                     while (true) {
+                        
+                        System.out.println("Esperando conexion.");
                         Socket socket = server.accept();
+                        i++;
+                        System.out.println("Encontramos conexion.");
+                        try {
+                            sleep(2000);
+                        } catch (InterruptedException e) {
+                        }
+                        System.out.println("Terminamos de dormir.");
                         
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String identificador = in.readLine();
                         if (identificador.equalsIgnoreCase("AvisoConexion")) {
-                            avisoConexion(in);
+                            System.out.println("Entrando la conexion.");
+                            try {
+                                avisoConexion(in);
+                            }catch (IOException e){
+                                System.out.println("Hubo un error de lectura.");
+                            }
+                            
+                            System.out.println("Conexion entrada.");
                         } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
                             requestReceptores(out);
                         }
+                        System.out.println("Socket " + i + " cerrado.");
                         socket.close();
                     }
                 } catch (IOException e) {
