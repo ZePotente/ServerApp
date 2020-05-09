@@ -26,13 +26,14 @@ public class Server {
         
     }
     
-    public void abrirSv(int port) {
+    public void abrirSv(int port) throws IOException {
         new Thread() {
             public void run() {
                 try {
                     server = new ServerSocket(port);
                     while (true) {
                         Socket socket = server.accept();
+                        
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String identificador = in.readLine();
@@ -53,8 +54,8 @@ public class Server {
         // Leo el nombre del usuario
         aux = in.readLine();
         Usuario usuario = usuarios.get(aux);
-        // Ya esta agregado, solo debo modificar su estado
-        if (usuario != null) {
+        
+        if (usuario != null) { // Ya esta agregado, solo debo modificar su estado
             // Leo la IP del usuario que en este caso no se utiliza
             aux = in.readLine();
             // Leo el estado del usuario
