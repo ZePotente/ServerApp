@@ -24,6 +24,7 @@ public class Sistema {
         try {
             sv.abrirSv(port);
         } catch (IOException e) {
+            System.out.println("Error al abrir el Directorio. El programa se cerrara (probablemente).");
         }
     }
 }
