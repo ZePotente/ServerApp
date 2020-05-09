@@ -13,10 +13,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import java.net.UnknownHostException;
-
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class Server {
     private static ServerSocket server;
@@ -32,7 +30,6 @@ public class Server {
                     server = new ServerSocket(port);
                     while (true) {
                         Socket socket = server.accept();
-                        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String identificador = in.readLine();
                         if (identificador.equalsIgnoreCase("AvisoConexion")) {
@@ -65,6 +62,21 @@ public class Server {
     private void requestReceptores(PrintWriter out) {
         out.println(FormateadorListaUsuarios.escribeListUsuarios(usuarios));
         // out.flush();// no es necesario porque tiene autoflush
+    }
+
+    /**
+     * Desconecta a los usuarios cuyo nombre este en la lista.<br>
+     * De momento la <i> lista de usuarios</i> no se encuentra sincronizada,
+     * y aca tampoco se tiene en cuenta la sincronizacion.<br>
+     * 
+     * <b>Pre:</b> nombres != null, y ninguna componente suya es null.
+     * 
+     * @param nombres
+     */
+    public void desconectar(ArrayList<String> nombres) {
+        for(String nom : nombres) {
+            usuarios.remove(nom);
+        }
     }
 }
 

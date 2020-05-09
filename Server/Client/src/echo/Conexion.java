@@ -1,25 +1,25 @@
 package echo;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import java.net.Socket;
 
 public class Conexion {
     private Socket socket;
-    private PrintWriter out;
+    private OutputStream out;
     
     public Conexion(Socket socket) throws IOException {
         this.socket = socket;
-        out = new PrintWriter(socket.getOutputStream(), true);
+        out = socket.getOutputStream();
     }
-    
-    public void ping() {
-        try {
-            out.write((byte)'\n');
-        }
-        catch (IOException e){
-            
-        }
+
+    /**
+     * Este metodo revisa la conexion.
+     * @throws IOException Se lanza si se rompio la conexion.
+     */
+    public void ping() throws IOException {
+        out.write((byte)'\n');
     }
 }

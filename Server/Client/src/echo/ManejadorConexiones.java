@@ -1,5 +1,7 @@
 package echo;
 
+import client.Server;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -10,9 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ManejadorConexiones extends Thread {
+    Server server;
     HashMap<String, Conexion> conexiones;
 
-    public ManejadorConexiones() {
+    public ManejadorConexiones(Server server) {
+        this.server = server;
         this.conexiones = new HashMap<String, Conexion>();
     }
 
@@ -27,12 +31,28 @@ public class ManejadorConexiones extends Thread {
     public void agregarConexion(String nombre, Socket socket) throws IOException {
         conexiones.put(nombre, new Conexion(socket));
     }
+
+    public void notificarDesconexiones() {
+        server.desconectar(nombresDesc);
+    }
     
+    /**
+     * Este metodo devuelve un ArrayList de conexiones caidas.<br>
+     * Ademas elimina estas conexiones de la coleccion de conexiones.<br>
+     * 
+     * @return Es distinto de null, a lo sumo devuelve una lista vacia.
+     */
     private ArrayList<String> conexionesCaidas() {
         ArrayList<String> conexCaidas = new ArrayList<String>();
         for (Map.Entry<String, Conexion> con : conexiones.entrySet()) {
-            con.getValue().
-                
+            try {
+                con.getValue().ping();
+            } catch (IOException e) {
+                // Se corto la conexion, se agrega a la lista y se lo borra de las conexiones
+                conexCaidas.add(con.getKey());
+                conexiones.remove(con.getKey());
+            }
         }
+        return conexCaidas;
     }
 }
