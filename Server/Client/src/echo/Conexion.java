@@ -14,5 +14,12 @@ public class Conexion {
         out = new PrintWriter(socket.getOutputStream(), true);
     }
     
-    
+    public void ping() {
+        try {
+            out.write((byte)'\n');
+        }
+        catch (IOException e){
+            
+        }
+    }
 }
