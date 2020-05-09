@@ -23,7 +23,7 @@ public class Sistema {
     private void iniciarSv() {
         try {
             sv.abrirSv(port);
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (IOException e) {
         }
     }
 }

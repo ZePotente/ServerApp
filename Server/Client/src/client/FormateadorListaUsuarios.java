@@ -3,12 +3,9 @@ package client;
 import java.util.HashMap;
 
 public class FormateadorListaUsuarios {
-    private final String SEPARADOR_ATRIBUTOS = "_", SEPARADOR_USUARIOS = "-";
-    public FormateadorListaUsuarios() {
-        super();
-    }
+    private static final String SEPARADOR_ATRIBUTOS = "_", SEPARADOR_USUARIOS = "-";
     
-    public String escribeListUsuarios(HashMap<String, Usuario> usuarios) {
+    public static String escribeListUsuarios(HashMap<String, Usuario> usuarios) {
         String retorno = "";
         for (Usuario usuario: usuarios.values()) {
             retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_ATRIBUTOS + usuario.getEstado() + SEPARADOR_USUARIOS;
