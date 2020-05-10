@@ -9,28 +9,41 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
  * <b>Inv:</b> conexionesAct != null.
  */
-public class ManejadorConexiones extends Thread {
+public class ManejadorConexiones {
     private Server server;
     private HashMap<String, Conexion> conexionesAct;
 
     public ManejadorConexiones(Server server) {
         this.server = server;
         this.conexionesAct = new HashMap<String, Conexion>();
-        
+        executePeriodUsersRequest();
     }
-    
-    
+
+    public void executePeriodUsersRequest() {
+            ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
+            es.scheduleAtFixedRate(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        verificarDesconexiones();
+                    }
+                }, 
+                0, 7, TimeUnit.SECONDS);
+        }
 
     /**
      * Agrega una conexion a la coleccion de conexiones actuales.<br>
      * <b>Pre: </b> nombre != null y socket != null.<br>
-     * 
-     * @param nombre El nombre de el usuario en conexion
+     *
+     * @param nombre El nombre del usuario en conexion
      * @param socket El socket de la conexion
      * @throws IOException Arroja una IOException si la conexion fue cortada antes de intentar agregarlo.
      */
@@ -46,7 +59,8 @@ public class ManejadorConexiones extends Thread {
         }
     }
 
-    //tal vez se le podria avisar de otra manera.
+    // tal vez se le podria avisar de otra manera.
+    // crear un hilo aparte o usar otro que ya esta hecho.
     public void notificarDesconexiones() {
         server.ponerOffline(conexionesCaidas());
     }
