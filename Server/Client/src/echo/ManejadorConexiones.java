@@ -21,7 +21,10 @@ public class ManejadorConexiones extends Thread {
     public ManejadorConexiones(Server server) {
         this.server = server;
         this.conexionesAct = new HashMap<String, Conexion>();
+        
     }
+    
+    
 
     /**
      * Agrega una conexion a la coleccion de conexiones actuales.<br>
@@ -72,8 +75,12 @@ public class ManejadorConexiones extends Thread {
      * 
      * @param conexiones Lista de nombres a desconectar.
      */
-    private void desconectar(ArrayList<String> conexiones) {
-        for(String con : conexiones)
+    private void desconectar(ArrayList<String> nombres) {
+        for(String con : nombres)
             conexionesAct.remove(con);
+    }
+    
+    public void desconectar(String nombre) {
+        conexionesAct.remove(nombre);
     }
 }

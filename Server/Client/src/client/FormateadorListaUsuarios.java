@@ -7,7 +7,7 @@ public class FormateadorListaUsuarios {
     
     public static String escribeListUsuarios(Map<String, Usuario> usuarios) {
         String retorno = "";
-        synchronized(usuarios) { // para iterar se necesita bloquear.
+        synchronized(usuarios) { // para iterar se necesita bloquear. Habria que ver de desacoplar esto.
             for (Usuario usuario: usuarios.values()) {
                 retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_ATRIBUTOS + usuario.getEstado() + SEPARADOR_USUARIOS;
             }

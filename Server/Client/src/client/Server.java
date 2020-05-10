@@ -1,5 +1,7 @@
 package client;
 
+import echo.ManejadorConexiones;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -19,31 +21,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
-    private static ServerSocket server;
+    private ServerSocket server;
     private static Map<String, Usuario> usuarios = Collections.synchronizedMap(new HashMap<>());
+    private ManejadorConexiones mancon;
     
     public Server() {
-        
+        mancon = new ManejadorConexiones(this);
     }
     
     public void abrirSv(int port) throws IOException {
         new Thread() {
             public void run() {
-                    server = new ServerSocket(port);
-                    while (true) {
-                        Socket socket = server.accept();
-                        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        String identificador = in.readLine();
-                        if (identificador.equalsIgnoreCase("AvisoConexion")) {
-                            avisoConexion(in);
-                        } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
-                            requestReceptores(out);
-                        }
-                        socket.close();
+                server = new ServerSocket(port);
+                while (true) {
+                    Socket socket = server.accept();
+                    // identificacion
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String identificador = in.readLine();
+                    if (identificador.equalsIgnoreCase("AvisoConexion")) {
+                        avisoDeConexion(socket, in);
+                    } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
+                        requestReceptores(out);
                     }
+                    if (!identificador.equalsIgnoreCase("RequestReceptores"))
+                        try {
+                            socket.close();
+                        } catch (IOException e) {
+                            //Error al cerrar el socket
+                        }
+                }
             }
         }.start();
     }
+    /*
     private void avisoConexion(BufferedReader in) throws IOException {
         String aux;
         // Leo el nombre del usuario
@@ -60,14 +70,45 @@ public class Server {
             usuarios.put(aux, new Usuario(aux, in.readLine(), true));
         }
     }
+    */
+    private void avisoDeConexion(Socket socket, BufferedReader in) throws IOException {
+        String nombre, ip;
+        // Leo el nombre e ip del usuario
+        nombre = in.readLine();
+        ip = in.readLine(); //se usa si no esta registrado
+        if (isRegistrado(nombre)) {
+            // Leo el estado del usuario
+            String estado = in.readLine();
+            boolean conectar = estado.equalsIgnoreCase("true");
+            if (conectar) { 
+                this.ponerOnline(nombre);
+                
+            } else { 
+                this.ponerOffline(nombre);
+            }
+        }
+        else { //registrar
+            this.registrar(nombre, ip);
+            this.co
+        }
+    }
     
     private void requestReceptores(PrintWriter out) {
         out.println(FormateadorListaUsuarios.escribeListUsuarios(usuarios));
         // out.flush();// no es necesario porque tiene autoflush
     }
-
+    
+    private boolean isRegistrado(String nombre) {
+        Usuario us = usuarios.get(nombre);
+        return us != null;
+    }
+    
+    private void registrar(String nombre, String ip) {
+        usuarios.put(nombre, new Usuario(nombre, ip, false));
+    }
+    
     public void desconectarUsuarios(ArrayList<String> nombres) {
-        new Thread() {
+        new Thread() { // habria que ver de tener ya un hilo y correrlo.
             public void run() {
                 ponerOffline(nombres);
             }
