@@ -73,10 +73,19 @@ public class Server {
      * 
      * @param nombres
      */
-    public void desconectar(ArrayList<String> nombres) {
+    public void ponerOffline(ArrayList<String> nombres) {
         for(String nom : nombres) {
-            usuarios.remove(nom);
+            this.ponerOffline(nom);
         }
+    }
+
+    /**
+     * Desconecta a un determinado usuario
+     * <b>Pre:</b> nombre != null
+     * @param nombre El nombre del usuario
+     */
+    public void ponerOffline(String nombre) {
+        usuarios.remove(nombre);
     }
 }
 

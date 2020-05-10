@@ -11,13 +11,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * <b>Inv:</b> conexionesAct != null.
+ */
 public class ManejadorConexiones extends Thread {
-    Server server;
-    HashMap<String, Conexion> conexiones;
+    private Server server;
+    private HashMap<String, Conexion> conexionesAct;
 
     public ManejadorConexiones(Server server) {
         this.server = server;
-        this.conexiones = new HashMap<String, Conexion>();
+        this.conexionesAct = new HashMap<String, Conexion>();
     }
 
     /**
@@ -29,30 +33,47 @@ public class ManejadorConexiones extends Thread {
      * @throws IOException Arroja una IOException si la conexion fue cortada antes de intentar agregarlo.
      */
     public void agregarConexion(String nombre, Socket socket) throws IOException {
-        conexiones.put(nombre, new Conexion(socket));
+        conexionesAct.put(nombre, new Conexion(socket));
+    }
+
+    public void verificarDesconexiones() {
+        ArrayList<String> conexiones = conexionesCaidas();
+        if (conexiones.size() > 0) {
+            this.desconectar(conexiones);
+            this.notificarDesconexiones();
+        }
     }
 
     public void notificarDesconexiones() {
-        server.desconectar(nombresDesc);
+        server.ponerOffline(conexionesCaidas());
     }
     
     /**
-     * Este metodo devuelve un ArrayList de conexiones caidas.<br>
-     * Ademas elimina estas conexiones de la coleccion de conexiones.<br>
+     * Este metodo verifica las conexiones y devuelve un ArrayList de conexiones caidas.<br>
      * 
-     * @return Es distinto de null, a lo sumo devuelve una lista vacia.
+     * @return Es distinto de null, a lo sumo devuelve una lista vacia si no hubo desconexiones.
      */
     private ArrayList<String> conexionesCaidas() {
         ArrayList<String> conexCaidas = new ArrayList<String>();
-        for (Map.Entry<String, Conexion> con : conexiones.entrySet()) {
+        for (Map.Entry<String, Conexion> con : conexionesAct.entrySet()) {
             try {
                 con.getValue().ping();
             } catch (IOException e) {
-                // Se corto la conexion, se agrega a la lista y se lo borra de las conexiones
+                // Se corto la conexion, se agrega a la listade conexiones caidas.
                 conexCaidas.add(con.getKey());
-                conexiones.remove(con.getKey());
             }
         }
         return conexCaidas;
+    }
+
+    /**
+     * Elimina, de la coleccion de usuarios conectados, las conexiones asociadas a los nombres del ArrayList.<br>
+     * <b>Pre:</b> conexiones != null. (creo, no se que pasa en el for si es null.
+     * 
+     * @param conexiones Lista de nombres a desconectar.
+     */
+    private void desconectar(ArrayList<String> conexiones) {
+        for(String con : conexiones)
+            conexionesAct.remove(con);
     }
 }
