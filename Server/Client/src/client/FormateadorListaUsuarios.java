@@ -1,16 +1,17 @@
 package client;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class FormateadorListaUsuarios {
     private static final String SEPARADOR_ATRIBUTOS = "_", SEPARADOR_USUARIOS = "-";
     
-    public static String escribeListUsuarios(HashMap<String, Usuario> usuarios) {
+    public static String escribeListUsuarios(Map<String, Usuario> usuarios) {
         String retorno = "";
-        for (Usuario usuario: usuarios.values()) {
-            retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_ATRIBUTOS + usuario.getEstado() + SEPARADOR_USUARIOS;
+        synchronized(usuarios) { // para iterar se necesita bloquear.
+            for (Usuario usuario: usuarios.values()) {
+                retorno += usuario.getNombre() + SEPARADOR_ATRIBUTOS + usuario.getNumeroDeIP() + SEPARADOR_ATRIBUTOS + usuario.getEstado() + SEPARADOR_USUARIOS;
+            }
         }
-        // retorno = pruebaEnvio();
         return retorno;
     }
     

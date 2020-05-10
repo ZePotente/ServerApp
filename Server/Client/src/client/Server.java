@@ -14,11 +14,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
     private static ServerSocket server;
-    private static HashMap<String, Usuario> usuarios = new HashMap<>();
+    private static Map<String, Usuario> usuarios = Collections.synchronizedMap(new HashMap<>());
     
     public Server() {
         
@@ -64,32 +66,45 @@ public class Server {
         // out.flush();// no es necesario porque tiene autoflush
     }
 
+    public void desconectarUsuarios(ArrayList<String> nombres) {
+        new Thread() {
+            public void run() {
+                ponerOffline(nombres);
+            }
+        }.start();
+    }
+    
     /**
-     * Crea un hilo de ejecucion que desconecta a los usuarios cuyo nombre este en la lista.<br>
-     * De momento la <i> lista de usuarios</i> no se encuentra sincronizada,
-     * y aca tampoco se tiene en cuenta la sincronizacion.<br>
+     * Desconecta a los usuarios cuyo nombre este en la lista.<br>
      * 
      * <b>Pre:</b> nombres != null, y ninguna componente suya es null.
      * 
      * @param nombres Lista de nombres a poner como offline.
      */
     public void ponerOffline(ArrayList<String> nombres) {
-        new Thread() {
-            public void run() {
-                for(String nom : nombres) {
-                    ponerOffline(nom);
-                }    
-            }
-        }.start();
+        for(String nom : nombres) {
+            ponerOffline(nom);
+        }
     }
 
     /**
-     * Desconecta a un determinado usuario
+     * Establece el estado de un Usuario como desconectado.
      * <b>Pre:</b> nombre != null
+     * 
      * @param nombre El nombre del usuario
      */
-    public void ponerOffline(String nombre) {
-        usuarios.remove(nombre);
+    private void ponerOffline(String nombre) {
+        usuarios.get(nombre).setEstado(false);
+    }
+
+    /**Establece el estado de un Usuario como conectado.
+     * <b>Pre:</b> nombre != null
+     * 
+     * @param nombre El nombre del usuario
+     * @param nombre
+     */
+    private void ponerOnline(String nombre) {
+        usuarios.get(nombre).setEstado(true);
     }
 }
 
