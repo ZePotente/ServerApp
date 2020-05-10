@@ -3,7 +3,6 @@ package echo;
 import client.Server;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import java.net.Socket;
 
@@ -38,12 +37,13 @@ public class ManejadorConexiones extends Thread {
 
     public void verificarDesconexiones() {
         ArrayList<String> conexiones = conexionesCaidas();
-        if (conexiones.size() > 0) {
+        if (conexiones.size() > 0) { // sino, para que llamarlos
             this.desconectar(conexiones);
             this.notificarDesconexiones();
         }
     }
 
+    //tal vez se le podria avisar de otra manera.
     public void notificarDesconexiones() {
         server.ponerOffline(conexionesCaidas());
     }

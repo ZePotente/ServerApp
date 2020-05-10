@@ -65,18 +65,22 @@ public class Server {
     }
 
     /**
-     * Desconecta a los usuarios cuyo nombre este en la lista.<br>
+     * Crea un hilo de ejecucion que desconecta a los usuarios cuyo nombre este en la lista.<br>
      * De momento la <i> lista de usuarios</i> no se encuentra sincronizada,
      * y aca tampoco se tiene en cuenta la sincronizacion.<br>
      * 
      * <b>Pre:</b> nombres != null, y ninguna componente suya es null.
      * 
-     * @param nombres
+     * @param nombres Lista de nombres a poner como offline.
      */
     public void ponerOffline(ArrayList<String> nombres) {
-        for(String nom : nombres) {
-            this.ponerOffline(nom);
-        }
+        new Thread() {
+            public void run() {
+                for(String nom : nombres) {
+                    ponerOffline(nom);
+                }    
+            }
+        }.start();
     }
 
     /**
