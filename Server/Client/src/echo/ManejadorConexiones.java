@@ -38,9 +38,10 @@ public class ManejadorConexiones {
             this.notificarDesconexiones();
         }
     }
-
+    
     // tal vez se le podria avisar de otra manera.
-    // crear un hilo aparte o usar otro que ya esta hecho.
+    // crear un hilo aparte o usar otro que ya esta hecho,
+    // para que no tenga que ser el timer el que lo haga
     public void notificarDesconexiones() {
         Sistema.getInstance().desconectar(conexionesAct.conexionesCaidas());
     }

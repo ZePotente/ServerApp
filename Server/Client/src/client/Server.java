@@ -60,7 +60,12 @@ public class Server {
         nombre = in.readLine(); // leo el noombre del receptor
         ip = in.readLine();     // leo la ip
         
-        Sistema.getInstance().avisoDeConexion(nombre, ip, socket);
+        try {
+        Sistema.getInstance().agregarUsuario(nombre, ip, socket);
+        }
+        catch (IOException e){
+            System.out.println("Error. El usuario fue registrado correctamente, pero se perdio la conexion.");
+        }
     }
     
     private void requestReceptores(Socket socket) throws IOException {

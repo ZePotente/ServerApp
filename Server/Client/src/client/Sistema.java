@@ -39,7 +39,7 @@ public class Sistema {
         sv.abrirSv(Sistema.PUERTO);
     }
     
-    public void avisoDeConexion(String nombre, String ip, Socket socket) {
+    public void agregarUsuario(String nombre, String ip, Socket socket) throws IOException {
         if (!usuarios.isRegistrado(nombre)) 
             usuarios.registrar(nombre, ip);   
         mancon.agregarConexion(nombre, socket);
@@ -52,6 +52,6 @@ public class Sistema {
     
     public UsuariosRegistrados getListaUsuariosRegistrados() {
         return usuarios;
-    }
+    }   
 }
 
