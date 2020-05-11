@@ -21,11 +21,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
+    private static final int port = 100;
+    
     private ServerSocket server;
-    private static Map<String, Usuario> usuarios = Collections.synchronizedMap(new HashMap<>());
+    private UsuariosRegistrados usuarios;
     private ManejadorConexiones mancon;
     
     public Server() {
+        usuarios = new UsuariosRegistrados();
         mancon = new ManejadorConexiones(this);
     }
     
@@ -39,8 +42,10 @@ public class Server {
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     String identificador = in.readLine();
                     if (identificador.equalsIgnoreCase("AvisoConexion")) {
+                        // en realidad Sistema.avisoDeConexion(socket)
                         avisoDeConexion(socket, in);
                     } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
+                        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                         requestReceptores(out);
                     }
                     if (!identificador.equalsIgnoreCase("RequestReceptores"))
@@ -49,42 +54,28 @@ public class Server {
                         } catch (IOException e) {
                             //Error al cerrar el socket
                         }
+                    else {
+                        // mandaron cualquier cosa
+                    }
                 }
             }
         }.start();
     }
-    /*
-    private void avisoConexion(BufferedReader in) throws IOException {
-        String aux;
-        // Leo el nombre del usuario
-        aux = in.readLine();
-        Usuario usuario = usuarios.get(aux);
-        
-        if (usuario != null) { // Ya esta agregado, solo debo modificar su estado
-            // Leo la IP del usuario que en este caso no se utiliza
-            aux = in.readLine();
-            // Leo el estado del usuario
-            aux = in.readLine();
-            usuario.setEstado(aux.equalsIgnoreCase("true"));
-        } else { // No esta agregado, debo agregarlo
-            usuarios.put(aux, new Usuario(aux, in.readLine(), true));
-        }
-    }
-    */
+    
     private void avisoDeConexion(Socket socket, BufferedReader in) throws IOException {
         String nombre, ip;
         // Leo el nombre e ip del usuario
         nombre = in.readLine();
         ip = in.readLine(); //se usa si no esta registrado
-        if (isRegistrado(nombre)) {
+        if (usuarios.isRegistrado(nombre)) {
             // Leo el estado del usuario
             String estado = in.readLine();
             boolean conectar = estado.equalsIgnoreCase("true");
             if (conectar) { 
-                this.ponerOnline(nombre);
-                
+                usuarios.ponerOnline(nombre);
+                // agregar conexion
             } else { 
-                this.ponerOffline(nombre);
+                // this.ponerOffline(nombre);
             }
         }
         else { //registrar
@@ -94,19 +85,11 @@ public class Server {
     }
     
     private void requestReceptores(PrintWriter out) {
-        out.println(FormateadorListaUsuarios.escribeListUsuarios(usuarios));
+        out.println(FormateadorListaUsuarios.escribeListUsuarios(usuarios.getMap()));
         // out.flush();// no es necesario porque tiene autoflush
     }
     
-    private boolean isRegistrado(String nombre) {
-        Usuario us = usuarios.get(nombre);
-        return us != null;
-    }
-    
-    private void registrar(String nombre, String ip) {
-        usuarios.put(nombre, new Usuario(nombre, ip, false));
-    }
-    
+    /*
     public void desconectarUsuarios(ArrayList<String> nombres) {
         new Thread() { // habria que ver de tener ya un hilo y correrlo.
             public void run() {
@@ -114,38 +97,8 @@ public class Server {
             }
         }.start();
     }
+    */
     
-    /**
-     * Desconecta a los usuarios cuyo nombre este en la lista.<br>
-     * 
-     * <b>Pre:</b> nombres != null, y ninguna componente suya es null.
-     * 
-     * @param nombres Lista de nombres a poner como offline.
-     */
-    public void ponerOffline(ArrayList<String> nombres) {
-        for(String nom : nombres) {
-            ponerOffline(nom);
-        }
-    }
-
-    /**
-     * Establece el estado de un Usuario como desconectado.
-     * <b>Pre:</b> nombre != null
-     * 
-     * @param nombre El nombre del usuario
-     */
-    private void ponerOffline(String nombre) {
-        usuarios.get(nombre).setEstado(false);
-    }
-
-    /**Establece el estado de un Usuario como conectado.
-     * <b>Pre:</b> nombre != null
-     * 
-     * @param nombre El nombre del usuario
-     * @param nombre
-     */
-    private void ponerOnline(String nombre) {
-        usuarios.get(nombre).setEstado(true);
-    }
+    
 }
 

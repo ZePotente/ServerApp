@@ -62,7 +62,8 @@ public class ManejadorConexiones {
     // tal vez se le podria avisar de otra manera.
     // crear un hilo aparte o usar otro que ya esta hecho.
     public void notificarDesconexiones() {
-        server.ponerOffline(conexionesCaidas());
+        //En realidad Sistema.desconectar(conexionesCaidas())
+        //server.ponerOffline(conexionesCaidas());
     }
     
     /**
