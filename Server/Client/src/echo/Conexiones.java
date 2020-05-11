@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * <b>Inv:</b> conexionesAct != null.
+ */
 public class Conexiones {
     private HashMap<String, Conexion> conexionesAct;
     
@@ -48,13 +51,14 @@ public class Conexiones {
     
     /**
      * Elimina, de la coleccion de usuarios conectados, las conexiones asociadas a los nombres del ArrayList.<br>
-     * <b>Pre:</b> nombres != null. (creo, no se que pasa en el for si es null.
+     * <b>Pre:</b> nombres != null. (creo, no se que pasa en el for si es null.<br>
+     * Aplica desconectar(String nombre) a cada elemento de la coleccion.<br>
      * 
-     * @param conexiones Lista de nombres a desconectar.
+     * @param conexiones Lista de nombres a cortarles la conexion.
      */
     public void desconectar(ArrayList<String> nombres) {
         for(String con : nombres)
-            conexionesAct.remove(con);
+            desconectar(con);
     }
 
     /**

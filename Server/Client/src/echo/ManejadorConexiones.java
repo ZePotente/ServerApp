@@ -1,22 +1,16 @@
 package echo;
 
-import client.Server;
+import client.Sistema;
 
 import java.io.IOException;
 
 import java.net.Socket;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
-/**
- * <b>Inv:</b> conexionesAct != null.
- */
 public class ManejadorConexiones {
     private Conexiones conexionesAct;
 
@@ -34,7 +28,7 @@ public class ManejadorConexiones {
                         verificarDesconexiones();
                     }
                 }, 
-                0, 7, TimeUnit.SECONDS);
+                0, 5, TimeUnit.SECONDS);
         }
 
     public void verificarDesconexiones() {
@@ -48,7 +42,12 @@ public class ManejadorConexiones {
     // tal vez se le podria avisar de otra manera.
     // crear un hilo aparte o usar otro que ya esta hecho.
     public void notificarDesconexiones() {
-        //En realidad Sistema.desconectar(conexionesCaidas())
-        //server.ponerOffline(conexionesCaidas());
+        Sistema.getInstance().desconectar(conexionesAct.conexionesCaidas());
+    }
+    
+    public void agregarConexion(String nombre, Socket socket) throws IOException {
+        synchronized(conexionesAct) {
+            conexionesAct.agregarConexion(nombre, socket);
+        }
     }
 }

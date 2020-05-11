@@ -5,6 +5,9 @@ import java.util.Map;
 public class FormateadorListaUsuarios {
     private static final String SEPARADOR_ATRIBUTOS = "_", SEPARADOR_USUARIOS = "-";
     
+    public static String escribeListUsuarios(UsuariosRegistrados usuarios) {
+        return escribeListUsuarios(usuarios.getMap()); // provisorio permanente
+    }
     public static String escribeListUsuarios(Map<String, Usuario> usuarios) {
         String retorno = "";
         synchronized(usuarios) { // para iterar se necesita bloquear. Habria que ver de desacoplar esto.
