@@ -1,29 +1,21 @@
 package echo;
 
-import client.Server;
+import client.Sistema;
 
 import java.io.IOException;
 
 import java.net.Socket;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
-/**
- * <b>Inv:</b> conexionesAct != null.
- */
 public class ManejadorConexiones {
-    private Server server;
-    private HashMap<String, Conexion> conexionesAct;
+    private Conexiones conexionesAct;
 
-    public ManejadorConexiones(Server server) {
-        this.server = server;
-        this.conexionesAct = new HashMap<String, Conexion>();
+    public ManejadorConexiones() {
+        conexionesAct = new Conexiones();
         executePeriodUsersRequest();
     }
 
@@ -36,65 +28,27 @@ public class ManejadorConexiones {
                         verificarDesconexiones();
                     }
                 }, 
-                0, 7, TimeUnit.SECONDS);
+                0, 5, TimeUnit.SECONDS);
         }
 
-    /**
-     * Agrega una conexion a la coleccion de conexiones actuales.<br>
-     * <b>Pre: </b> nombre != null y socket != null.<br>
-     *
-     * @param nombre El nombre del usuario en conexion
-     * @param socket El socket de la conexion
-     * @throws IOException Arroja una IOException si la conexion fue cortada antes de intentar agregarlo.
-     */
-    public void agregarConexion(String nombre, Socket socket) throws IOException {
-        conexionesAct.put(nombre, new Conexion(socket));
-    }
-
     public void verificarDesconexiones() {
-        ArrayList<String> conexiones = conexionesCaidas();
+        ArrayList<String> conexiones = conexionesAct.conexionesCaidas();
         if (conexiones.size() > 0) { // sino, para que llamarlos
-            this.desconectar(conexiones);
+            conexionesAct.desconectar(conexiones);
             this.notificarDesconexiones();
         }
     }
-
+    
     // tal vez se le podria avisar de otra manera.
-    // crear un hilo aparte o usar otro que ya esta hecho.
+    // crear un hilo aparte o usar otro que ya esta hecho,
+    // para que no tenga que ser el timer el que lo haga
     public void notificarDesconexiones() {
-        server.ponerOffline(conexionesCaidas());
+        Sistema.getInstance().desconectar(conexionesAct.conexionesCaidas());
     }
     
-    /**
-     * Este metodo verifica las conexiones y devuelve un ArrayList de conexiones caidas.<br>
-     * 
-     * @return Es distinto de null, a lo sumo devuelve una lista vacia si no hubo desconexiones.
-     */
-    private ArrayList<String> conexionesCaidas() {
-        ArrayList<String> conexCaidas = new ArrayList<String>();
-        for (Map.Entry<String, Conexion> con : conexionesAct.entrySet()) {
-            try {
-                con.getValue().ping();
-            } catch (IOException e) {
-                // Se corto la conexion, se agrega a la listade conexiones caidas.
-                conexCaidas.add(con.getKey());
-            }
+    public void agregarConexion(String nombre, Socket socket) throws IOException {
+        synchronized(conexionesAct) {
+            conexionesAct.agregarConexion(nombre, socket);
         }
-        return conexCaidas;
-    }
-
-    /**
-     * Elimina, de la coleccion de usuarios conectados, las conexiones asociadas a los nombres del ArrayList.<br>
-     * <b>Pre:</b> conexiones != null. (creo, no se que pasa en el for si es null.
-     * 
-     * @param conexiones Lista de nombres a desconectar.
-     */
-    private void desconectar(ArrayList<String> nombres) {
-        for(String con : nombres)
-            conexionesAct.remove(con);
-    }
-    
-    public void desconectar(String nombre) {
-        conexionesAct.remove(nombre);
     }
 }
