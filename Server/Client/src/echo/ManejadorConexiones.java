@@ -32,18 +32,20 @@ public class ManejadorConexiones {
         }
 
     public void verificarDesconexiones() {
+        System.out.println("Verificando conexiones.");
         ArrayList<String> conexiones = conexionesAct.conexionesCaidas();
         if (conexiones.size() > 0) { // sino, para que llamarlos
+            System.out.println("Hay desconexiones nuevas.");
             conexionesAct.desconectar(conexiones);
-            this.notificarDesconexiones();
+            notificarDesconexiones(conexiones);
         }
     }
     
     // tal vez se le podria avisar de otra manera.
     // crear un hilo aparte o usar otro que ya esta hecho,
     // para que no tenga que ser el timer el que lo haga
-    public void notificarDesconexiones() {
-        Sistema.getInstance().desconectar(conexionesAct.conexionesCaidas());
+    public void notificarDesconexiones(ArrayList<String> conexiones) {
+        Sistema.getInstance().desconectar(conexiones);
     }
     
     public void agregarConexion(String nombre, Socket socket) throws IOException {

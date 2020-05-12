@@ -24,17 +24,20 @@ public class Server {
                     server = new ServerSocket(port);
                     while (true) {
                         Socket socket = server.accept();
+                        System.out.println("Se recibio una conexion.");
                         // identificacion
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String identificador = in.readLine();
                         
                         if (identificador.equalsIgnoreCase("AvisoConexion")) {
+                            System.out.println("La conexion es un aviso de conexion.");
                             try {
-                                avisoDeConexion(socket);
+                                avisoDeConexion(socket, in);
                             } catch (IOException e) {
                                 System.out.println("Error al procesar una conexion al servidor.");
                             }
                         } else if (identificador.equalsIgnoreCase("RequestReceptores")) {
+                            System.out.println("La conexion es una request de receptores.");
                             try {
                                 requestReceptores(socket);
                             } catch (IOException e) {
@@ -54,14 +57,14 @@ public class Server {
         }.start();
     }
     
-    private void avisoDeConexion(Socket socket) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String nombre, ip, estado;
-        nombre = in.readLine(); // leo el noombre del receptor
-        ip = in.readLine();     // leo la ip
+    private void avisoDeConexion(Socket socket, BufferedReader in) throws IOException {
+        String nombre, ip;
+        nombre = in.readLine();
+        ip = in.readLine();
         
         try {
-        Sistema.getInstance().agregarUsuario(nombre, ip, socket);
+            System.out.println("Se va a agregar al usuario.");
+            Sistema.getInstance().agregarUsuario(nombre, ip, socket);
         }
         catch (IOException e){
             System.out.println("Error. El usuario fue registrado correctamente, pero se perdio la conexion.");
@@ -72,24 +75,11 @@ public class Server {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         UsuariosRegistrados usuarios;
         String lista;
-        
         usuarios = Sistema.getInstance().getListaUsuariosRegistrados();
+
         lista = FormateadorListaUsuarios.escribeListUsuarios(usuarios);
-        
         out.println(lista);
         socket.close();
     }
-    
-    /*
-    public void desconectarUsuarios(ArrayList<String> nombres) {
-        new Thread() { // habria que ver de tener ya un hilo y correrlo.
-            public void run() {
-                ponerOffline(nombres);
-            }
-        }.start();
-    }
-    */
-    
-    
 }
 

@@ -51,6 +51,7 @@ public class UsuariosRegistrados {
      */
      public void ponerOffline(String nombre) {
         usuarios.get(nombre).setEstado(false);
+        System.out.println("Se puso offline un usuario llamado:" + nombre + ".");
     }
 
 

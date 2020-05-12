@@ -41,9 +41,11 @@ public class Sistema {
     
     public void agregarUsuario(String nombre, String ip, Socket socket) throws IOException {
         if (!usuarios.isRegistrado(nombre)) 
-            usuarios.registrar(nombre, ip);   
+            usuarios.registrar(nombre, ip);
+            System.out.println("Se registro un usuario llamado: " + nombre + ".");
         mancon.agregarConexion(nombre, socket);
         usuarios.ponerOnline(nombre);
+        System.out.println("Se puso online un usuario llamado: " + nombre + ".");
     }
     
     public void desconectar(ArrayList<String> nombres) {
