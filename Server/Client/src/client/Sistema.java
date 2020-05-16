@@ -12,8 +12,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
-public class Sistema {
+public class Sistema implements Observer {
     private static final int PUERTO = 100;
     private static Sistema sistema = null;
     
@@ -33,6 +35,7 @@ public class Sistema {
         iniciarSv();
         usuarios = new UsuariosRegistrados();
         mancon = new ManejadorConexiones();
+        mancon.addObserver(this);
     }
     
     private void iniciarSv() {
@@ -54,6 +57,15 @@ public class Sistema {
     
     public UsuariosRegistrados getListaUsuariosRegistrados() {
         return usuarios;
-    }   
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o == mancon) {
+            throw new IllegalArgumentException(); //progra 3
+        }
+        ArrayList<String> nombres = (ArrayList<String>) arg;
+        desconectar(nombres);
+    }
 }
 
