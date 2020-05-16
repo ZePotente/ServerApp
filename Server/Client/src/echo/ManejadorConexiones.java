@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.net.Socket;
 
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ManejadorConexiones {
+public class ManejadorConexiones extends Observable {
     private Conexiones conexionesAct;
 
     public ManejadorConexiones() {
@@ -44,8 +45,15 @@ public class ManejadorConexiones {
     // tal vez se le podria avisar de otra manera.
     // crear un hilo aparte o usar otro que ya esta hecho,
     // para que no tenga que ser el timer el que lo haga
+    /*
     public void notificarDesconexiones(ArrayList<String> conexiones) {
         Sistema.getInstance().desconectar(conexiones);
+    }
+    
+    */
+    public void notificarDesconexiones(ArrayList<String> conexiones) {
+        setChanged();
+        notifyObservers(conexiones);
     }
     
     public void agregarConexion(String nombre, Socket socket) throws IOException {
@@ -53,4 +61,6 @@ public class ManejadorConexiones {
             conexionesAct.agregarConexion(nombre, socket);
         }
     }
+    
+    
 }
