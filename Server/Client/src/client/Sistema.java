@@ -61,7 +61,7 @@ public class Sistema implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o == mancon) {
+        if (o != mancon) {
             throw new IllegalArgumentException(); //progra 3
         }
         ArrayList<String> nombres = (ArrayList<String>) arg;
