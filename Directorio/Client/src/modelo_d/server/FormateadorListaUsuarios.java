@@ -1,6 +1,9 @@
-package client;
+package modelo_d.server;
 
 import java.util.Map;
+
+import modelo_d.registro_usuarios.Usuario;
+import modelo_d.registro_usuarios.UsuariosRegistrados;
 
 public class FormateadorListaUsuarios {
     private static final String SEPARADOR_ATRIBUTOS = "_", SEPARADOR_USUARIOS = "-";

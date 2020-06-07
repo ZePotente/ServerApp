@@ -1,4 +1,4 @@
-package client;
+package modelo_d.registro_usuarios;
 
 public class Usuario {
     private String nombre;
