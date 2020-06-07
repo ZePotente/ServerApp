@@ -1,6 +1,6 @@
-package client;
+package modelo_d;
 
-import echo.ManejadorConexiones;
+import modelo_d.echo.ManejadorConexiones;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +14,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+
+import modelo_d.registro_usuarios.UsuariosRegistrados;
+
+import modelo_d.server.Server;
 
 public class Sistema implements Observer {
     private static final int PUERTO = 100;

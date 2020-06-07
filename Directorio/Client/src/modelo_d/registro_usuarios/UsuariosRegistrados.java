@@ -1,4 +1,4 @@
-package client;
+package modelo_d.registro_usuarios;
 
 import java.util.ArrayList;
 import java.util.Collections;

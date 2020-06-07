@@ -1,4 +1,4 @@
-package client;
+package modelo_d.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,10 @@ import java.io.PrintWriter;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import modelo_d.Sistema;
+
+import modelo_d.registro_usuarios.UsuariosRegistrados;
 
 
 public class Server {    

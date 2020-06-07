@@ -1,6 +1,6 @@
-package echo;
+package modelo_d.echo;
 
-import client.Sistema;
+import modelo_d.Sistema;
 
 import java.io.IOException;
 

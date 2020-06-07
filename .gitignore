@@ -1,4 +1,4 @@
 #ignorar la carpeta .data para evitar quilombos
-Server/.data
-Server/Client/model
-Server/Client/deploy
+Directorio/.data
+Directorio/Client/model
+Directorio/Client/deploy

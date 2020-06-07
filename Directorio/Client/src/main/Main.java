@@ -1,6 +1,6 @@
 package main;
 
-import client.Sistema;
+import modelo_d.Sistema;
 
 public class Main {
     public Main() {
