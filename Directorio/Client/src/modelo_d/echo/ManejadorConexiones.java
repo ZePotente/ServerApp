@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ManejadorConexiones extends Observable {
+public class ManejadorConexiones extends Observable implements IEcho {
     private Conexiones conexionesAct;
 
     public ManejadorConexiones() {

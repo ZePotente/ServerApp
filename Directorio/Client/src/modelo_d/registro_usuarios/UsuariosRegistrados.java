@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UsuariosRegistrados {
+public class UsuariosRegistrados implements RegistroUsuarios {
     private static Map<String, Usuario> usuarios;
     
     public UsuariosRegistrados() {

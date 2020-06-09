@@ -15,7 +15,7 @@ import modelo_d.Sistema;
 import modelo_d.registro_usuarios.UsuariosRegistrados;
 
 
-public class Server {    
+public class Server implements IServer {    
     private ServerSocket server;
     
     public Server() {
