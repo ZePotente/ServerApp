@@ -1,5 +1,11 @@
 package modelo_d;
 
+import configuracion.Configuracion;
+
+import configuracion.LectorConfiguracion;
+
+import configuracion.NoLecturaConfiguracionException;
+
 import modelo_d.echo.ManejadorConexiones;
 
 import java.io.BufferedReader;
@@ -20,21 +26,29 @@ import modelo_d.registro_usuarios.UsuariosRegistrados;
 import modelo_d.server.Server;
 
 public class Sistema implements Observer {
-    private static final int PUERTO = 100;
+    //private static final int PUERTO = 100;
     private static Sistema sistema = null;
+    private static final String ARCHIVO_CONFIG = "configuracionD.txt";
     
     private Server sv;
     private UsuariosRegistrados usuarios;
     private ManejadorConexiones mancon;
+    private Configuracion config;
     
     public static synchronized Sistema getInstance() {
         if (sistema == null) {
-            sistema = new Sistema();
+            try {
+                sistema = new Sistema();
+            } catch (NoLecturaConfiguracionException e) {
+                System.out.println("Error al leer la configuracion.");
+                System.out.println("Por favor reinicie el Directorio.");
+            }
         }
         return sistema;
     }
     
-    private Sistema() {
+    private Sistema() throws NoLecturaConfiguracionException {
+        config = LectorConfiguracion.leerConfig(ARCHIVO_CONFIG);
         sv = new Server();
         iniciarSv();
         usuarios = new UsuariosRegistrados();
@@ -43,7 +57,7 @@ public class Sistema implements Observer {
     }
     
     private void iniciarSv() {
-        sv.abrirSv(Sistema.PUERTO);
+        sv.abrirSv(config.getPuertoResto());
     }
     
     public void agregarUsuario(String nombre, String ip, Socket socket) throws IOException {
