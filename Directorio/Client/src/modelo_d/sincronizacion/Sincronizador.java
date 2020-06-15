@@ -16,6 +16,8 @@ import java.net.Socket;
 
 import java.util.ArrayList;
 
+import modelo_d.Sistema;
+
 import modelo_d.registro_usuarios.RegistroUsuarios;
 
 
