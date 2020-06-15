@@ -13,5 +13,19 @@ public class Configuracion {
         this.puertoOtroDir = Integer.parseInt(puertoOtroDir);
     }
 
-    
+    public int getPuertoResto() {
+        return puertoResto;
+    }
+
+    public int getPuertoSync() {
+        return puertoSync;
+    }
+
+    public String getIPOtroDir() {
+        return IPOtroDir;
+    }
+
+    public int getPuertoOtroDir() {
+        return puertoOtroDir;
+    }
 }
