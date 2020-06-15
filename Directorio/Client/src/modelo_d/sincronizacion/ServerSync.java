@@ -36,16 +36,19 @@ public class ServerSync extends Observable implements IServerSync {
                         }else {
                             //ArrayList<
                             String usuario = in.readLine();
+                            /*
                             do {
                                 
                             }
                             while (i)
+                            
                             if (identificador == ) {
                             }else if (identificador == ) {
                                     
                             }else if (identificador == ) {
                                     
                             }
+                            */
                         }
                     }
                 }catch (IOException e) {

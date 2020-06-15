@@ -1,19 +1,31 @@
 package modelo_d.sincronizacion;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+
+import java.io.Serializable;
 
 import java.net.Socket;
 
 import java.util.ArrayList;
+
+import modelo_d.registro_usuarios.RegistroUsuarios;
+
+import modelo_d.sincronizacion.notificacion.Notificacion;
+import modelo_d.sincronizacion.notificacion.NotificacionConexion;
 
 public class Sincronizador implements Sincronizable {
     //se podria llegar a cambiar por una coleccion de {ip,puerto) si fuera necesario
     private String ipOtroDirectorio;
     private int otroPuerto;
     //
-    private final String SEPARADOR = "-";
+    private final String SEPARADOR = "\n", SEPARADOR_ATRIBUTOS = "-";
     private ServerSync sv;
     public Sincronizador(String nroIP, int otroPuerto, int estePuerto) {
         super();
@@ -21,39 +33,52 @@ public class Sincronizador implements Sincronizable {
         this.otroPuerto = otroPuerto;
         sv = new ServerSync(estePuerto);
     }
+    //
+    private void enviarMensaje(String mensaje) throws IOException {
+        try (Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);) {
+            
+            out.write(mensaje);
+            if (out.checkError()) {
+                throw new IOException();
+            }
+        } 
+    }
     
-    @Override
-    private void notificar(String identificador, String mensaje) {
-        Socket socket = new Socket(ip.trim(), puerto);
-        OutputStream out = socket.getOutputStream();
-        
-        
-        out.write(identificador + SEPARADOR + mensaje);
-        try {
-            socket.close();
-        } catch (IOException e) {
-            //ya se mando igualmente
+    
+    private String enviarObjetoYRecibirOtro(Serializable objeto) throws IOException {
+        try(Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
+            OutputStream out = socket.getOutputStream();
+            ObjectOutputStream objectOut= new ObjectOutputStream(out);
+            InputStream in= socket.getInputStream();
+            ObjectInputStream objectIn = new ObjectInputStream(in);) {
+            
+            
         }
     }
     
-    public void notificarConexion(String nombre) {
-        Notificacion noti = new NotificacionConexion(nombre);
-        noti.notificar(ipOtroDirectorio, otroPuerto);
+    //separacion de responsabilidades
+    
+    private void notificar(String identificador, String mensaje) throws IOException {
+        this.enviarMensaje(identificador + SEPARADOR + mensaje);
+    }
+    
+    public void notificarConexion(String nombre) throws IOException {
+        notificar("Notificacion Conexion", nombre);
     }
 
     @Override
-    public void notificarDesconexiones(ArrayList<String> nombres) {
-        // TODO Implement this method
+    public void notificarRegistro(String nombre, String ip) throws IOException {
+        notificar("Notificacion Registro", nombre + SEPARADOR_ATRIBUTOS + ip);
     }
 
     @Override
-    public void notificarRegistro() {
-        //tal vez si el registro fuera mas que dar el nombre habria que agregar otra cosa
-        // TODO Implement this method
+    public void notificarDesconexion(String nombre) throws IOException {
+        notificar("Notificacion Desconexion", nombre);
     }
-
+    
     @Override
-    public void pedirUsuarios() {
-        // TODO Implement this method
+    public RegistroUsuarios pedirUsuarios(RegistroUsuarios registroActual) throws IOException {
+        this.enviarObjetoYRecibirOtro("Peticion Usuarios", registroActual);
     }
 }
