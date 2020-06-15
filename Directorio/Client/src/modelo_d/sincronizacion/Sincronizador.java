@@ -38,26 +38,11 @@ public class Sincronizador implements Sincronizable {
     private void enviarMensaje(String mensaje) throws IOException {
         try (Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
              OutputStream os = socket.getOutputStream();
-             DataOutputStream dos = new DataOutputStream(os)){
+             ObjectOutputStream oos = new ObjectOutputStream(os)){
             
-            dos.writeUTF(mensaje);
-            
+            oos.writeUTF(mensaje);
         }
     }
-    
-    /*
-    private String enviarObjetoYRecibirOtro(Serializable objeto) throws IOException {
-        try(Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
-            OutputStream os = socket.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(out);
-            InputStream is = socket.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(in);) {
-            
-            
-        }
-    }
-    */
-    //separacion de responsabilidades
     
     private void notificar(String identificador, Notificacion mensaje) throws IOException {
         try (Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
@@ -84,15 +69,25 @@ public class Sincronizador implements Sincronizable {
         notificar(IServerSync.NOTIF_DESCONEXION, new Notificacion(nombre));
     }
     
-    /*
     @Override
-    public RegistroUsuarios pedirUsuarios(ArrayList<String, String> capo) throws IOException {
-        this.enviarObjetoYRecibirOtro("Peticion Usuarios", registroActual);
-    }
-    */
-    @Override
-    public RegistroUsuarios pedirUsuarios(RegistroUsuarios registroActual) throws IOException {
-        // TODO Implement this method
-        return null;
+    public RegistroUsuarios pedirUsuarios() throws IOException {
+        RegistroUsuarios usuarios;
+        try (Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
+             OutputStream os = socket.getOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(os);
+             InputStream is = socket.getInputStream();
+             ObjectInputStream ois = new ObjectInputStream(is)){
+            String identificador = IServerSync.PETICION_USUARIOS;
+            
+            oos.writeUTF(identificador);
+            System.out.println("Peticion enviada.");
+            usuarios = (RegistroUsuarios) ois.readObject();
+            System.out.println("Peticion recibida.");
+            
+        } catch (ClassNotFoundException e) {
+            System.out.println("Se leyo un objeto que no era el que se esperaba.");
+            throw new IOException (e);
+        }
+        return usuarios;
     }
 }

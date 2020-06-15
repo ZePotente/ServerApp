@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import modelo_d.registro_usuarios.RegistroUsuarios;
 import modelo_d.registro_usuarios.UsuariosRegistrados;
 
 import modelo_d.server.Server;
@@ -33,7 +34,7 @@ public class Sistema implements Observer {
     private static final String ARCHIVO_CONFIG = "configuracionD.txt";
     
     private Server sv;
-    private UsuariosRegistrados usuarios;
+    private RegistroUsuarios usuarios;
     private ManejadorConexiones mancon;
     private Configuracion config;
     private Sincronizable sincronizador;
@@ -58,6 +59,15 @@ public class Sistema implements Observer {
         mancon = new ManejadorConexiones();
         mancon.addObserver(this);
         sincronizador = new Sincronizador(config.getIPOtroDir(), config.getPuertoOtroDir(), config.getPuertoSync());
+        new Thread() {
+            public void run() {
+                try {
+                    usuarios = sincronizador.pedirUsuarios();
+                } catch (IOException e) {
+                    System.out.println("No se sincronizo con otro Directorio.");
+                }
+            }
+        }.start();
     }
     
     private void iniciarSv() {
@@ -108,6 +118,10 @@ public class Sistema implements Observer {
     }
     
     public UsuariosRegistrados getListaUsuariosRegistrados() {
+        return (UsuariosRegistrados) usuarios;
+    }
+    
+    public RegistroUsuarios sincronizacionUsuarios() {
         return usuarios;
     }
     

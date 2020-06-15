@@ -7,6 +7,9 @@ import java.io.InputStreamReader;
 
 import java.io.ObjectInputStream;
 
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -37,13 +40,18 @@ public class ServerSync implements IServerSync {
                         System.out.println("Se recibio una notificacion de sincronizacion.");
                         InputStream is = socket.getInputStream();
                         ObjectInputStream ois = new ObjectInputStream(is);
+                        OutputStream os = socket.getOutputStream();
+                        ObjectOutputStream oos = new ObjectOutputStream(os);
                         
+                        System.out.println("HOLA");
                         String identificador = ois.readUTF();
                         System.out.println(identificador);
                         try {
                             if (identificador.equals(PETICION_USUARIOS)) {
-                                RegistroUsuarios usuarios = (RegistroUsuarios) ois.readObject();
-                                Sistema.getInstance().sincronizacionUsuarios();
+                                RegistroUsuarios usuarios = Sistema.getInstance().sincronizacionUsuarios();
+                                System.out.println("Por enviar objeto.");
+                                oos.writeObject(usuarios);
+                                System.out.println("Objeto enviado.");
                             }else{
                                 Notificacion noti = (Notificacion) ois.readObject();
                                 System.out.println(noti.getAtributos().get(0));
