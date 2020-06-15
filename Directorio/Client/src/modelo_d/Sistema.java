@@ -26,7 +26,7 @@ import modelo_d.registro_usuarios.UsuariosRegistrados;
 import modelo_d.server.Server;
 
 public class Sistema implements Observer {
-    private static final int PUERTO = 100;
+    //private static final int PUERTO = 100;
     private static Sistema sistema = null;
     private static final String ARCHIVO_CONFIG = "configuracionD.txt";
     
@@ -57,7 +57,7 @@ public class Sistema implements Observer {
     }
     
     private void iniciarSv() {
-        sv.abrirSv(Sistema.PUERTO);
+        sv.abrirSv(config.getPuertoResto());
     }
     
     public void agregarUsuario(String nombre, String ip, Socket socket) throws IOException {
