@@ -25,8 +25,10 @@ import modelo_d.registro_usuarios.UsuariosRegistrados;
 
 import modelo_d.server.Server;
 
+import modelo_d.sincronizacion.Sincronizable;
+import modelo_d.sincronizacion.Sincronizador;
+
 public class Sistema implements Observer {
-    //private static final int PUERTO = 100;
     private static Sistema sistema = null;
     private static final String ARCHIVO_CONFIG = "configuracionD.txt";
     
@@ -34,6 +36,7 @@ public class Sistema implements Observer {
     private UsuariosRegistrados usuarios;
     private ManejadorConexiones mancon;
     private Configuracion config;
+    private Sincronizable sincronizador;
     
     public static synchronized Sistema getInstance() {
         if (sistema == null) {
@@ -54,6 +57,7 @@ public class Sistema implements Observer {
         usuarios = new UsuariosRegistrados();
         mancon = new ManejadorConexiones();
         mancon.addObserver(this);
+        sincronizador = new Sincronizador(config.getIPOtroDir(), config.getPuertoOtroDir(), config.getPuertoSync());
     }
     
     private void iniciarSv() {
@@ -61,22 +65,64 @@ public class Sistema implements Observer {
     }
     
     public void agregarUsuario(String nombre, String ip, Socket socket) throws IOException {
-        if (!usuarios.isRegistrado(nombre)) 
+        if (!usuarios.isRegistrado(nombre)) {
             usuarios.registrar(nombre, ip);
             System.out.println("Se registro un usuario llamado: " + nombre + ".");
+            new Thread() {
+                public void run() {
+                    try {
+                        sincronizador.notificarRegistro(nombre, ip);
+                    } catch (IOException e) {
+                        System.out.println("No se pudo notificar sincronizacion.");
+                    }
+                }
+            }.start();
+        }
         mancon.agregarConexion(nombre, socket);
         usuarios.ponerOnline(nombre);
         System.out.println("Se puso online un usuario llamado: " + nombre + ".");
+        new Thread() {
+            public void run() {
+                try {
+                    sincronizador.notificarConexion(nombre);
+                } catch (IOException e) {
+                    System.out.println("No se pudo notificar sincronizacion.");
+                }
+            }
+        }.start();
     }
     
     public void desconectar(ArrayList<String> nombres) {
         usuarios.ponerOffline(nombres);
+        new Thread() {
+            public void run() {
+                try {
+                    for (String nombre : nombres) {
+                       sincronizador.notificarDesconexion(nombre);
+                    }
+                } catch (IOException e) {
+                    System.out.println("No se pudo notificar sincronizacion.");
+                }
+            }
+        }.start();
     }
     
     public UsuariosRegistrados getListaUsuariosRegistrados() {
         return usuarios;
     }
-
+    
+    public void notificacionRegistro(String nombre, String ip) {
+        this.usuarios.registrar(nombre, ip);
+    }
+    
+    public void notificacionConexion(String nombre) {
+        this.usuarios.ponerOnline(nombre);
+    }
+    
+    public void notificacionDesconexion(String nombre) {
+        this.usuarios.ponerOffline(nombre);
+    }
+    
     @Override
     public void update(Observable o, Object arg) {
         if (o != mancon) {

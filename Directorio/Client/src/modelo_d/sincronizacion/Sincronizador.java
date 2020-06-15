@@ -1,6 +1,7 @@
 package modelo_d.sincronizacion;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,8 +18,6 @@ import java.util.ArrayList;
 
 import modelo_d.registro_usuarios.RegistroUsuarios;
 
-import modelo_d.sincronizacion.notificacion.Notificacion;
-import modelo_d.sincronizacion.notificacion.NotificacionConexion;
 
 public class Sincronizador implements Sincronizable {
     //se podria llegar a cambiar por una coleccion de {ip,puerto) si fuera necesario
@@ -36,49 +35,62 @@ public class Sincronizador implements Sincronizable {
     //
     private void enviarMensaje(String mensaje) throws IOException {
         try (Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);) {
+             OutputStream os = socket.getOutputStream();
+             DataOutputStream dos = new DataOutputStream(os)){
             
-            out.write(mensaje);
-            if (out.checkError()) {
-                throw new IOException();
-            }
-        } 
-    }
-    
-    
-    private String enviarObjetoYRecibirOtro(Serializable objeto) throws IOException {
-        try(Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
-            OutputStream out = socket.getOutputStream();
-            ObjectOutputStream objectOut= new ObjectOutputStream(out);
-            InputStream in= socket.getInputStream();
-            ObjectInputStream objectIn = new ObjectInputStream(in);) {
-            
+            dos.writeUTF(mensaje);
             
         }
     }
     
+    /*
+    private String enviarObjetoYRecibirOtro(Serializable objeto) throws IOException {
+        try(Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
+            OutputStream os = socket.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            InputStream is = socket.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(in);) {
+            
+            
+        }
+    }
+    */
     //separacion de responsabilidades
     
-    private void notificar(String identificador, String mensaje) throws IOException {
-        this.enviarMensaje(identificador + SEPARADOR + mensaje);
+    private void notificar(String identificador, Notificacion mensaje) throws IOException {
+        try (Socket socket = new Socket(ipOtroDirectorio.trim(), otroPuerto);
+             OutputStream os = socket.getOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(os)){
+            oos.writeUTF(identificador);
+            oos.writeObject(mensaje);
+        }
     }
     
-    public void notificarConexion(String nombre) throws IOException {
-        notificar("Notificacion Conexion", nombre);
-    }
-
     @Override
     public void notificarRegistro(String nombre, String ip) throws IOException {
-        notificar("Notificacion Registro", nombre + SEPARADOR_ATRIBUTOS + ip);
+        Notificacion noti = new Notificacion(nombre, ip);
+        notificar(IServerSync.NOTIF_REGISTRO, noti);
+    }
+    
+    @Override
+    public void notificarConexion(String nombre) throws IOException {
+        notificar(IServerSync.NOTIF_CONEXION, new Notificacion(nombre));
     }
 
     @Override
     public void notificarDesconexion(String nombre) throws IOException {
-        notificar("Notificacion Desconexion", nombre);
+        notificar(IServerSync.NOTIF_DESCONEXION, new Notificacion(nombre));
     }
     
+    /*
+    @Override
+    public RegistroUsuarios pedirUsuarios(ArrayList<String, String> capo) throws IOException {
+        this.enviarObjetoYRecibirOtro("Peticion Usuarios", registroActual);
+    }
+    */
     @Override
     public RegistroUsuarios pedirUsuarios(RegistroUsuarios registroActual) throws IOException {
-        this.enviarObjetoYRecibirOtro("Peticion Usuarios", registroActual);
+        // TODO Implement this method
+        return null;
     }
 }

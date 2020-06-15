@@ -2,7 +2,10 @@ package modelo_d.sincronizacion;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import java.io.ObjectInputStream;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,7 +15,7 @@ import java.util.Observable;
 
 import modelo_d.Sistema;
 
-public class ServerSync extends Observable implements IServerSync {
+public class ServerSync implements IServerSync {
     private int puerto;
     private ServerSocket sv;
     public ServerSync(int puerto) {
@@ -29,26 +32,28 @@ public class ServerSync extends Observable implements IServerSync {
                     while (true) {
                         Socket socket = sv.accept();
                         System.out.println("Se recibio una notificacion de sincronizacion.");
-                        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        String identificador = in.readLine();
+                        InputStream is = socket.getInputStream();
+                        ObjectInputStream ois = new ObjectInputStream(is);
+                        
+                        String identificador = ois.readUTF();
+                        System.out.println(identificador);
                         if (identificador == PETICION_USUARIOS) {
-                            //Sistema.
-                        }else {
-                            //ArrayList<
-                            String usuario = in.readLine();
-                            /*
-                            do {
-                                
+                            //Sistema.getInstance().
+                        }else{
+                            try {
+                                Notificacion noti = (Notificacion) ois.readObject();
+                                System.out.println(noti.getAtributos().get(0));
+                                //get(0) es el nombre, get(1) la ip, si estuviera
+                                if (identificador == NOTIF_REGISTRO) {
+                                    Sistema.getInstance().notificacionRegistro(noti.getAtributos().get(0), noti.getAtributos().get(1));
+                                }else if (identificador == NOTIF_CONEXION) {
+                                    Sistema.getInstance().notificacionConexion(noti.getAtributos().get(0));
+                                }else if (identificador == NOTIF_DESCONEXION) {
+                                    Sistema.getInstance().notificacionDesconexion(noti.getAtributos().get(0));
+                                }
+                            } catch (ClassNotFoundException e) {
+                                System.out.println("Se leyo un objeto que no era el que se esperaba.");
                             }
-                            while (i)
-                            
-                            if (identificador == ) {
-                            }else if (identificador == ) {
-                                    
-                            }else if (identificador == ) {
-                                    
-                            }
-                            */
                         }
                     }
                 }catch (IOException e) {
