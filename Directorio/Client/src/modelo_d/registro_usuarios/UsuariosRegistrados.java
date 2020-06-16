@@ -1,11 +1,13 @@
 package modelo_d.registro_usuarios;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UsuariosRegistrados implements RegistroUsuarios {
+public class UsuariosRegistrados implements RegistroUsuarios, Serializable {
     private static Map<String, Usuario> usuarios;
     
     public UsuariosRegistrados() {
