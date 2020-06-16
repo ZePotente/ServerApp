@@ -45,12 +45,16 @@ public class ServerSync implements IServerSync {
                         
                         System.out.println("HOLA");
                         String identificador = ois.readUTF();
-                        System.out.println(identificador);
+                        
+                        System.out.println("Identificador: " + identificador);
                         try {
                             if (identificador.equals(PETICION_USUARIOS)) {
                                 RegistroUsuarios usuarios = Sistema.getInstance().sincronizacionUsuarios();
+                                if (usuarios == null)
+                                    System.out.println("NULL");
                                 System.out.println("Por enviar objeto.");
                                 oos.writeObject(usuarios);
+                                oos.flush();
                                 System.out.println("Objeto enviado.");
                             }else{
                                 Notificacion noti = (Notificacion) ois.readObject();

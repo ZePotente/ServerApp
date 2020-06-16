@@ -49,7 +49,9 @@ public class Sincronizador implements Sincronizable {
              OutputStream os = socket.getOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(os)){
             oos.writeUTF(identificador);
+            oos.flush();
             oos.writeObject(mensaje);
+            oos.flush();
         }
     }
     
@@ -78,8 +80,9 @@ public class Sincronizador implements Sincronizable {
              InputStream is = socket.getInputStream();
              ObjectInputStream ois = new ObjectInputStream(is)){
             String identificador = IServerSync.PETICION_USUARIOS;
-            
+            oos.flush();
             oos.writeUTF(identificador);
+            oos.flush();
             System.out.println("Peticion enviada.");
             usuarios = (RegistroUsuarios) ois.readObject();
             System.out.println("Peticion recibida.");

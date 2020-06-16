@@ -94,9 +94,11 @@ public class Sistema implements Observer {
         new Thread() {
             public void run() {
                 try {
+                    Thread.sleep(3000);
                     sincronizador.notificarConexion(nombre);
                 } catch (IOException e) {
                     System.out.println("No se pudo notificar sincronizacion.");
+                } catch (InterruptedException e) {
                 }
             }
         }.start();
