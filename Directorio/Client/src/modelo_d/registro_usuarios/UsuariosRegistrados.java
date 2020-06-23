@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UsuariosRegistrados implements RegistroUsuarios, Serializable {
-    private static Map<String, Usuario> usuarios;
+    private Map<String, Usuario> usuarios;
     
     public UsuariosRegistrados() {
         usuarios = Collections.synchronizedMap(new HashMap<>());

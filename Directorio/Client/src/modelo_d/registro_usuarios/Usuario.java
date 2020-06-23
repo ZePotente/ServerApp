@@ -1,6 +1,8 @@
 package modelo_d.registro_usuarios;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
     private String nombre;
     private String numeroDeIP;
     private boolean estado;
